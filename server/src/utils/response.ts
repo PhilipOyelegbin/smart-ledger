@@ -1,7 +1,7 @@
-import { Response } from "express";
+import type { WritableResponse } from "../types/http.types";
 
 export const sendSuccess = <T>(
-  res: Response,
+  res: WritableResponse,
   message: string,
   result: T,
   statusCode = 200,
@@ -14,7 +14,7 @@ export const sendSuccess = <T>(
 };
 
 export const sendError = (
-  res: Response,
+  res: WritableResponse,
   message: string,
   statusCode = 500,
   errors?: unknown,

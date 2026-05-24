@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/response";
 import { ReceiptService } from "../services/receipt.service";
 import { PdfService } from "../services/pdf.service";
 import { EmailService } from "../services/email.service";
+import { AuthenticatedRequest } from "../types/http.types";
 
 export class ReceiptController {
   constructor(
@@ -12,7 +13,7 @@ export class ReceiptController {
     private readonly emailService = new EmailService(),
   ) {}
 
-  create = asyncHandler(async (req: Request, res: Response) => {
+  create = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const result = await this.receiptService.create(
       req.user!.userId,
       req.body,
@@ -21,7 +22,7 @@ export class ReceiptController {
     sendSuccess(res, "Receipt created successfully", result, 201);
   });
 
-  list = asyncHandler(async (req: Request, res: Response) => {
+  list = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const result = await this.receiptService.list(
       req.user!.userId,
       req.query as any,
@@ -30,7 +31,7 @@ export class ReceiptController {
     sendSuccess(res, "Receipts fetched successfully", result, 200);
   });
 
-  getById = asyncHandler(async (req: Request, res: Response) => {
+  getById = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const result = await this.receiptService.getById(
       req.user!.userId,
       String(req.params.id),
@@ -39,7 +40,7 @@ export class ReceiptController {
     sendSuccess(res, "Receipt fetched successfully", result, 200);
   });
 
-  pdf = asyncHandler(async (req: Request, res: Response) => {
+  pdf = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const receipt = await this.receiptService.getById(
       req.user!.userId,
       String(req.params.id),
@@ -57,7 +58,7 @@ export class ReceiptController {
     res.send(buffer);
   });
 
-  send = asyncHandler(async (req: Request, res: Response) => {
+  send = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const receipt = await this.receiptService.getById(
       req.user!.userId,
       String(req.params.id),

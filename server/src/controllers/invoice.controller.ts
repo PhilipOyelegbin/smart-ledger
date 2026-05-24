@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/response";
 import { InvoiceService } from "../services/invoice.service";
 import { PdfService } from "../services/pdf.service";
 import { EmailService } from "../services/email.service";
 import { InvoiceStatus } from "../entities/invoice.entity";
+import { AuthenticatedRequest } from "../types/http.types";
 
 export class InvoiceController {
   constructor(
@@ -13,7 +14,7 @@ export class InvoiceController {
     private readonly emailService = new EmailService(),
   ) {}
 
-  create = asyncHandler(async (req: Request, res: Response) => {
+  create = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const result = await this.invoiceService.create(
       req.user!.userId,
       req.body,
@@ -22,7 +23,7 @@ export class InvoiceController {
     sendSuccess(res, "Invoice created successfully", result, 201);
   });
 
-  list = asyncHandler(async (req: Request, res: Response) => {
+  list = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const result = await this.invoiceService.list(
       req.user!.userId,
       req.query as any,
@@ -31,7 +32,7 @@ export class InvoiceController {
     sendSuccess(res, "Invoices fetched successfully", result, 200);
   });
 
-  getById = asyncHandler(async (req: Request, res: Response) => {
+  getById = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const invoiceId = String(req.params.id);
     const result = await this.invoiceService.getById(
       req.user!.userId,
@@ -41,7 +42,7 @@ export class InvoiceController {
     sendSuccess(res, "Invoice fetched successfully", result, 200);
   });
 
-  update = asyncHandler(async (req: Request, res: Response) => {
+  update = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const invoiceId = String(req.params.id);
     const result = await this.invoiceService.update(
       req.user!.userId,
@@ -52,7 +53,7 @@ export class InvoiceController {
     sendSuccess(res, "Invoice updated successfully", result, 200);
   });
 
-  delete = asyncHandler(async (req: Request, res: Response) => {
+  delete = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const invoiceId = String(req.params.id);
     const result = await this.invoiceService.delete(
       req.user!.userId,
@@ -62,7 +63,7 @@ export class InvoiceController {
     sendSuccess(res, "Invoice deleted successfully", result, 200);
   });
 
-  pdf = asyncHandler(async (req: Request, res: Response) => {
+  pdf = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const invoiceId = String(req.params.id);
     const invoice = await this.invoiceService.getById(
       req.user!.userId,
@@ -78,7 +79,7 @@ export class InvoiceController {
     res.send(buffer);
   });
 
-  send = asyncHandler(async (req: Request, res: Response) => {
+  send = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const invoiceId = String(req.params.id);
     const invoice = await this.invoiceService.getById(
       req.user!.userId,

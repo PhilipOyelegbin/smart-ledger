@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/response";
 import { BusinessService } from "../services/business.service";
+import { AuthenticatedRequest } from "../types/http.types";
 
 export class BusinessController {
   constructor(private readonly businessService = new BusinessService()) {}
 
-  create = asyncHandler(async (req: Request, res: Response) => {
+  create = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const result = await this.businessService.create(
       req.user!.userId,
       req.body,
@@ -14,7 +15,7 @@ export class BusinessController {
     sendSuccess(res, "Business created successfully", result, 201);
   });
 
-  getById = asyncHandler(async (req: Request, res: Response) => {
+  getById = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const businessId = String(req.params.id);
     const result = await this.businessService.getById(
       req.user!.userId,
@@ -24,7 +25,7 @@ export class BusinessController {
     sendSuccess(res, "Business fetched successfully", result, 200);
   });
 
-  update = asyncHandler(async (req: Request, res: Response) => {
+  update = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const businessId = String(req.params.id);
     const result = await this.businessService.update(
       req.user!.userId,
