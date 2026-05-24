@@ -9,7 +9,7 @@ import analyticsRoutes from "./analytics.routes";
 
 const router = Router();
 
-router.get("/health", (_req, res) => {
+router.get("/health", (_req: any, res: any) => {
   res.json({
     success: true,
     message: "SmartLedger API is healthy",

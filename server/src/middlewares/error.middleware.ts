@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/AppError";
 import { logger } from "../config/logger";
+import type { HttpNextFunction } from "../types/http.types";
 
 export const notFoundMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+  req: any,
+  res: any,
+  next: HttpNextFunction,
 ) => {
   const error = new AppError(
     `Route not found: ${req.method} ${req.originalUrl}`,
@@ -16,9 +16,9 @@ export const notFoundMiddleware = (
 
 export const errorMiddleware = (
   error: Error,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
+  req: any,
+  res: any,
+  _next: HttpNextFunction,
 ) => {
   const isAppError = error instanceof AppError;
   const statusCode = isAppError ? error.statusCode : 500;

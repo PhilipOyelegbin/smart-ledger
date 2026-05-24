@@ -34,7 +34,7 @@ export const createApp = () => {
   app.use(xssClean());
   app.use(mongoSanitize());
 
-  app.get("/", (_req, res) => {
+  app.get("/", (_req: any, res: any) => {
     res.json({
       success: true,
       message: "SmartLedger API",

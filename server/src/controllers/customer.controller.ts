@@ -1,13 +1,12 @@
-import { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/response";
 import { CustomerService } from "../services/customer.service";
-import { AuthenticatedRequest } from "../types/http.types";
+import type { WritableResponse } from "../types/http.types";
 
 export class CustomerController {
   constructor(private readonly customerService = new CustomerService()) {}
 
-  create = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  create = asyncHandler(async (req: any, res: WritableResponse) => {
     const result = await this.customerService.create(
       req.user!.userId,
       req.body,
@@ -16,7 +15,7 @@ export class CustomerController {
     sendSuccess(res, "Customer created successfully", result, 201);
   });
 
-  list = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  list = asyncHandler(async (req: any, res: WritableResponse) => {
     const result = await this.customerService.list(
       req.user!.userId,
       req.query as any,
@@ -25,7 +24,7 @@ export class CustomerController {
     sendSuccess(res, "Customers fetched successfully", result, 200);
   });
 
-  getById = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  getById = asyncHandler(async (req: any, res: WritableResponse) => {
     const customerId = String(req.params.id);
     const result = await this.customerService.getById(
       req.user!.userId,
@@ -35,7 +34,7 @@ export class CustomerController {
     sendSuccess(res, "Customer fetched successfully", result, 200);
   });
 
-  update = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  update = asyncHandler(async (req: any, res: WritableResponse) => {
     const customerId = String(req.params.id);
     const result = await this.customerService.update(
       req.user!.userId,
@@ -46,7 +45,7 @@ export class CustomerController {
     sendSuccess(res, "Customer updated successfully", result, 200);
   });
 
-  delete = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  delete = asyncHandler(async (req: any, res: WritableResponse) => {
     const customerId = String(req.params.id);
     const result = await this.customerService.delete(
       req.user!.userId,
@@ -56,7 +55,7 @@ export class CustomerController {
     sendSuccess(res, "Customer deleted successfully", result, 200);
   });
 
-  history = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  history = asyncHandler(async (req: any, res: WritableResponse) => {
     const customerId = String(req.params.id);
     const result = await this.customerService.invoiceHistory(
       req.user!.userId,

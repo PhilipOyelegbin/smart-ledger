@@ -1,16 +1,11 @@
-import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 import { AuthenticationError, ForbiddenError } from "../utils/AppError";
 import { UserRole } from "../entities/user.entity";
 import { AuthenticatedUser } from "../types/auth.types";
-import { AuthenticatedRequest } from "../types/http.types";
+import type { HttpNextFunction } from "../types/http.types";
 
-export const authMiddleware = (
-  req: AuthenticatedRequest,
-  _res: Response,
-  next: NextFunction,
-) => {
+export const authMiddleware = (req: any, _res: any, next: HttpNextFunction) => {
   const header = req.headers.authorization;
 
   if (!header || !header.startsWith("Bearer ")) {
@@ -29,7 +24,7 @@ export const authMiddleware = (
 };
 
 export const roleMiddleware = (...roles: UserRole[]) => {
-  return (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
+  return (req: any, _res: any, next: HttpNextFunction) => {
     if (!req.user) {
       return next(new AuthenticationError("Access token is required"));
     }
