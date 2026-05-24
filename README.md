@@ -2,6 +2,8 @@
 
 SmartLedger is a monorepo for an invoice-generation SaaS platform. The current workspace contains a production-oriented backend API in `server/` and a placeholder frontend workspace in `client/`.
 
+---
+
 ## What SmartLedger Does
 
 SmartLedger is designed to manage the full billing lifecycle for small businesses and service teams:
@@ -13,11 +15,15 @@ SmartLedger is designed to manage the full billing lifecycle for small businesse
 - Track payment status and invoice lifecycle events
 - Provide dashboard analytics and audit logging
 
+---
+
 ## Repository Layout
 
 - `server/` - Express, TypeScript, TypeORM, PostgreSQL backend with auth, invoicing, receipts, PDF generation, email delivery, and security middleware
 - `client/` - Reserved for the web frontend
 - `README.md` - Project-level overview and onboarding guide
+
+---
 
 ## High-Level Architecture
 
@@ -32,6 +38,8 @@ flowchart LR
 ```
 
 The backend exposes the main API under `/api/v1` and serves interactive API documentation at `/api-docs`.
+
+---
 
 ## Technology Stack
 
@@ -55,6 +63,8 @@ The backend exposes the main API under `/api/v1` and serves interactive API docu
 
 - `client/` is currently empty and ready for the UI implementation.
 
+---
+
 ## Production Features
 
 The API includes production-focused capabilities such as:
@@ -64,6 +74,8 @@ The API includes production-focused capabilities such as:
 - JWT refresh-token rotation
 - Business-level invoice and receipt workflows
 - PDF and email export flows for invoice delivery
+
+---
 
 ## Quick Start
 
@@ -105,6 +117,8 @@ pnpm run dev
 
 By default, the API listens on the port defined in `server/.env`.
 
+---
+
 ## Common Server Scripts
 
 From `server/`:
@@ -116,6 +130,8 @@ From `server/`:
 - `pnpm run seed` - Load sample data
 - `pnpm run dc:up` - Start the Docker Compose database service
 - `pnpm run dc:down` - Stop Docker Compose services
+
+---
 
 ## API Surface
 
@@ -130,11 +146,15 @@ The backend covers the main billing flow:
 - Analytics and reporting
 - Audit logging
 
+---
+
 ## Documentation
 
 - API docs: `/api-docs`
 - API base path: `/api/v1`
-- Backend-specific setup and VAPT notes: [`server/README.md`](server/README.md)
+- Backend-specific setup: [`server/README.md`](server/README.md)
+
+---
 
 ## Quality and Security Checks
 
@@ -146,29 +166,4 @@ pnpm run build
 pnpm run test
 ```
 
-For deeper security validation, use:
-
-- Trivy to scan the Docker image
-- OWASP ZAP to scan the running API
-
-## Deployment Guidance
-
-- Use a real PostgreSQL instance in production.
-- Manage secrets through a secrets manager instead of committing `.env` values.
-- Put the API behind HTTPS and a reverse proxy or load balancer.
-- Run migrations in production instead of relying on schema synchronization.
-- Add the frontend application in `client/` when it is ready.
-
-## Current Status
-
-- Backend: implemented, tested, and ready for further hardening
-- Client: not yet implemented
-- Root workspace: serves as the top-level entry point for the monorepo
-
-## Roadmap
-
-1. Add the frontend application in `client/`
-2. Introduce database migrations for production deployments
-3. Add CI checks for build, tests, dependency audit, and container scanning
-4. Add readiness/liveness probes for orchestration
-5. Complete end-to-end testing for invoicing and receipt workflows
+---
