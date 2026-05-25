@@ -30,6 +30,22 @@ export class BusinessService {
     return this.businessRepository.save(business);
   }
 
+  async getAllForUser(userId: string, role?: UserRole) {
+    if (role === UserRole.ADMIN) {
+      return this.businessRepository.find({
+        relations: { user: true },
+        order: { createdAt: "DESC" },
+      });
+    }
+
+    return this.businessRepository
+      .createQueryBuilder("business")
+      .leftJoinAndSelect("business.user", "user")
+      .where("user.id = :userId", { userId })
+      .orderBy("business.createdAt", "DESC")
+      .getMany();
+  }
+
   async getById(userId: string, businessId: string, role?: UserRole) {
     const business = await this.businessRepository.findOne({
       where: { id: businessId },
@@ -68,5 +84,12 @@ export class BusinessService {
     });
 
     return this.businessRepository.save(business);
+  }
+
+  async delete(userId: string, businessId: string, role?: UserRole) {
+    const business = await this.getById(userId, businessId, role);
+    await this.businessRepository.remove(business);
+
+    return { id: businessId };
   }
 }

@@ -16,6 +16,38 @@ const router = Router();
 /**
  * @swagger
  * /businesses:
+ *   get:
+ *     tags: [Business]
+ *     summary: Get all businesses for the logged-in user
+ *     description: Retrieve every business owned by the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved businesses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Business'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/", authMiddleware, businessController.getAllForUser);
+
+/**
+ * @swagger
+ * /businesses:
  *   post:
  *     tags: [Business]
  *     summary: Register a new business
@@ -184,5 +216,34 @@ router.put(
   validate(businessSchemas.update),
   businessController.update,
 );
+
+/**
+ * @swagger
+ * /businesses/{id}:
+ *   delete:
+ *     tags: [Business]
+ *     summary: Delete a business
+ *     description: Delete an existing business owned by the authenticated user
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully deleted the business
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Business not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete("/:id", authMiddleware, businessController.delete);
 
 export default router;

@@ -14,6 +14,14 @@ export class BusinessController {
     sendSuccess(res, "Business created successfully", result, 201);
   });
 
+  getAllForUser = asyncHandler(async (req: any, res: WritableResponse) => {
+    const result = await this.businessService.getAllForUser(
+      req.user!.userId,
+      req.user?.role,
+    );
+    sendSuccess(res, "Businesses fetched successfully", result, 200);
+  });
+
   getById = asyncHandler(async (req: any, res: WritableResponse) => {
     const businessId = String(req.params.id);
     const result = await this.businessService.getById(
@@ -33,6 +41,16 @@ export class BusinessController {
       req.user?.role,
     );
     sendSuccess(res, "Business updated successfully", result, 200);
+  });
+
+  delete = asyncHandler(async (req: any, res: WritableResponse) => {
+    const businessId = String(req.params.id);
+    const result = await this.businessService.delete(
+      req.user!.userId,
+      businessId,
+      req.user?.role,
+    );
+    sendSuccess(res, "Business deleted successfully", result, 200);
   });
 }
 
