@@ -1,85 +1,85 @@
 import { useFormik } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import * as yup from "yup";
 import { Badge, Panel } from "../components/Ui";
-import { authBenefits } from "../data";
 import { useAuthStore } from "../store/authStore";
 
-type LoginValues = {
-  email: string;
+type ResetPasswordValues = {
   password: string;
+  confirmPassword: string;
 };
 
-const loginSchema = yup.object({
-  email: yup
-    .string()
-    .email("Enter a valid email address")
-    .required("Email is required"),
+const resetPasswordSchema = yup.object({
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password")], "Passwords must match")
+    .required("Confirm your password"),
 });
 
-export function LoginPage() {
+export function ResetPasswordPage() {
   const navigate = useNavigate();
-  const { login } = useAuthStore((state) => state.actions);
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token") ?? "";
+  const { resetPassword } = useAuthStore((state) => state.actions);
   const isLoading = useAuthStore((state) => state.isLoading);
   const error = useAuthStore((state) => state.error);
   const message = useAuthStore((state) => state.message);
 
-  const formik = useFormik<LoginValues>({
-    initialValues: { email: "", password: "" },
-    validationSchema: loginSchema,
+  const formik = useFormik<ResetPasswordValues>({
+    initialValues: { password: "", confirmPassword: "" },
+    validationSchema: resetPasswordSchema,
     onSubmit: async (values, helpers) => {
+      if (!token) {
+        helpers.setStatus("Reset token is missing from the URL.");
+        return;
+      }
+
       try {
-        await login(values);
+        await resetPassword({ token, password: values.password });
         helpers.resetForm();
-        navigate("/dashboard", { replace: true });
+        navigate("/login", { replace: true });
       } catch (submitError) {
         helpers.setStatus(
           submitError instanceof Error
             ? submitError.message
-            : "Unable to sign in",
+            : "Unable to reset password",
         );
       }
     },
   });
 
   return (
-    <Panel title="Sign in" subtitle="">
+    <Panel
+      title="Reset password"
+      subtitle="Choose a new password for your account"
+    >
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <Badge tone="sky">Welcome back</Badge>
+          <Badge tone="emerald">Secure reset</Badge>
           <Link
-            to="/register"
+            to="/login"
             className="text-sm text-[#2563EB] transition hover:text-[#1D4ED8]"
           >
-            Need an account?
+            Back to login
           </Link>
         </div>
 
+        {!token ? (
+          <div className="rounded-2xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-4 py-3 text-sm text-[#B91C1C]">
+            Reset token missing. Open the link from your email again.
+          </div>
+        ) : null}
+
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <label className="block space-y-2 text-sm">
-            <span className="text-[#64748B]">Email address</span>
-            <input
-              type="email"
-              placeholder="you@company.com"
-              className="w-full rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-[#2563EB]"
-              {...formik.getFieldProps("email")}
-            />
-            {formik.touched.email && formik.errors.email ? (
-              <span className="text-xs text-[#EF4444]">
-                {formik.errors.email}
-              </span>
-            ) : null}
-          </label>
-
-          <label className="block space-y-2 text-sm">
-            <span className="text-[#64748B]">Password</span>
+            <span className="text-[#64748B]">New password</span>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="At least 8 characters"
               className="w-full rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-[#2563EB]"
               {...formik.getFieldProps("password")}
             />
@@ -90,15 +90,20 @@ export function LoginPage() {
             ) : null}
           </label>
 
-          <div className="flex items-center justify-between text-sm text-[#64748B]">
-            <span>Need a password reset?</span>
-            <Link
-              to="/forgot-password"
-              className="font-medium text-[#2563EB] transition hover:text-[#1D4ED8]"
-            >
-              Forgot password
-            </Link>
-          </div>
+          <label className="block space-y-2 text-sm">
+            <span className="text-[#64748B]">Confirm new password</span>
+            <input
+              type="password"
+              placeholder="Repeat your new password"
+              className="w-full rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-[#2563EB]"
+              {...formik.getFieldProps("confirmPassword")}
+            />
+            {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+              <span className="text-xs text-[#EF4444]">
+                {formik.errors.confirmPassword}
+              </span>
+            ) : null}
+          </label>
 
           {formik.status || error || message ? (
             <div
@@ -110,28 +115,14 @@ export function LoginPage() {
 
           <button
             type="submit"
-            disabled={isLoading || formik.isSubmitting}
+            disabled={isLoading || formik.isSubmitting || !token}
             className="w-full rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] px-4 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isLoading || formik.isSubmitting ? "Signing in..." : "Sign in"}
+            {isLoading || formik.isSubmitting
+              ? "Resetting password..."
+              : "Reset password"}
           </button>
         </form>
-
-        <div className="grid gap-3 pt-2 sm:grid-cols-2">
-          {authBenefits.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] p-4"
-            >
-              <p className="text-sm font-semibold text-[#0F172A]">
-                {item.title}
-              </p>
-              <p className="mt-1 text-xs leading-6 text-[#64748B]">
-                {item.detail}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
     </Panel>
   );

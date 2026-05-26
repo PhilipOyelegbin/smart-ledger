@@ -9,6 +9,9 @@ import { CustomerEditPage } from "./pages/CustomerEditPage";
 import { BusinessPage } from "./pages/BusinessPage";
 import { BusinessEditPage } from "./pages/BusinessEditPage";
 import { ReceiptPage } from "./pages/ReceiptPage";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 
@@ -31,8 +34,13 @@ function App() {
         <Route element={<PublicRoute />}>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Route>
+        </Route>
+        <Route element={<AuthLayout />}>
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

@@ -39,7 +39,9 @@ export function RegisterPage() {
       try {
         await register(values);
         helpers.resetForm();
-        navigate("/dashboard", { replace: true });
+        navigate(`/verify-email?email=${encodeURIComponent(values.email)}`, {
+          replace: true,
+        });
       } catch (submitError) {
         helpers.setStatus(
           submitError instanceof Error
@@ -51,10 +53,7 @@ export function RegisterPage() {
   });
 
   return (
-    <Panel
-      title="Create your account"
-      subtitle=""
-    >
+    <Panel title="Create your account" subtitle="">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <Badge tone="indigo">Get started</Badge>

@@ -168,8 +168,8 @@ export class AuthService {
 
     if (
       !tokenRecord ||
-      tokenRecord.verifiedAt ||
-      tokenRecord.expiresAt < new Date()
+      tokenRecord?.verifiedAt ||
+      tokenRecord?.expiresAt < new Date()
     ) {
       throw new AuthenticationError("Verification token is invalid or expired");
     }
